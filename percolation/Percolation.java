@@ -1,11 +1,15 @@
-/* *****************************************************************************
- *  Name: Percolation. Second Try
- *  Date: 1st of December 2018
- *  Description: Missing
- **************************************************************************** */
-
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
+/**
+ * Two-dimensional percolation model. Simulates passing liquid or gas
+ * (futher filler) through porous material (futher filter) from top to
+ * bottom.
+ *
+ * Filter is modelled as 2d square grid, consisting of cells.
+ * The filler could pass between cells if they are neigbours and both
+ * are open. The neighbours for cell are given as cells next to it by
+ * horizontal or vertical. 
+ **/
 
 public class Percolation {
     private static final int TOP_SITE_NUMBER = 0;
