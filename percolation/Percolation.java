@@ -13,10 +13,10 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private static final int TOP_SITE_NUMBER = 0;
+    private final int botSiteNumber;
     private final WeightedQuickUnionUF weightedQuickUnionUF;
     private final int side;
     private boolean[][] openSites;
-    private final int botSiteNumber;
     private int openSitesQuantity;
 
     public Percolation(int n) {
@@ -31,15 +31,24 @@ public class Percolation {
         this.openSitesQuantity = 0;
     }
 
+    private void connectNeighboursIfOpen(int row, int col) {
+        if (row == 1) {
+            this.weightedQuickUnionUF.union(TOP_SITE_NUMBER, this.toWeightUnionNum(row, col));
+        }
+	int[][] neighbourCells = {{row+1, col}, {row-1, col}, {row, col+1}, {row, col-1}};
+	for (int[] cell: neighbourCells) {
+		this.connectIfNeighbourExistsAndIsOpen(row, col, cell[0], cell[1]);
+	}
+        if (row == this.side) {
+            this.weightedQuickUnionUF.union(this.botSiteNumber, this.toWeightUnionNum(row, col));
+        }
+    }
+
     private int toWeightUnionNum(int row, int col) {
         return (row - 1) * this.side + col;
     }
 
-    private boolean isValidRowColNum(int tested) {
-        return 1 <= tested && tested <= this.side;
-    }
-
-    private void connectIfNeighbourIfValidAndOpen(int row, int col, int
+    private void connectIfNeighbourExistsAndIsOpen(int row, int col, int
             neighbourRow, int neighbourCol) {
         if (this.isValidRowColNum(neighbourRow) && this.isValidRowColNum(neighbourCol)) {
             if (this.openSites[neighbourRow - 1][neighbourCol - 1]) {
@@ -51,17 +60,8 @@ public class Percolation {
         }
     }
 
-    private void connectNeighboursIfOpen(int row, int col) {
-        if (row == 1) {
-            this.weightedQuickUnionUF.union(TOP_SITE_NUMBER, this.toWeightUnionNum(row, col));
-        }
-        this.connectIfNeighbourIfValidAndOpen(row, col, row + 1, col);
-        this.connectIfNeighbourIfValidAndOpen(row, col, row - 1, col);
-        this.connectIfNeighbourIfValidAndOpen(row, col, row, col + 1);
-        this.connectIfNeighbourIfValidAndOpen(row, col, row, col - 1);
-        if (row == this.side) {
-            this.weightedQuickUnionUF.union(this.botSiteNumber, this.toWeightUnionNum(row, col));
-        }
+    private boolean isValidRowColNum(int tested) {
+        return 1 <= tested && tested <= this.side;
     }
 
     public void open(int row, int col) {
