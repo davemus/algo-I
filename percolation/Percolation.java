@@ -94,4 +94,14 @@ public class Percolation {
     public boolean percolates() {
         return this.weightedQuickUnionUF.connected(TOP_SITE_NUMBER, this.botSiteNumber);
     }
+
+    public static void main(String[] args) {
+	Percolation percolation = new Percolation(3);
+	int[][] pointsToOpen = {{1, 1}, {2, 1}, {3, 1}};
+	for (int[] point: pointsToOpen) {
+		assert !percolation.percolates();
+		percolation.open(point[0], point[1]);
+	}
+	assert percolation.percolates();
+    }
 }
