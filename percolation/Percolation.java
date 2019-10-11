@@ -42,56 +42,56 @@ public class Percolation {
 
 		Cell[] neighbours() {
 			Cell[] cells = {
-				new Cell(this.row + 1, this.col),
-				new Cell(this.row - 1, this.col),
-				new Cell(this.row, this.col + 1),
-				new Cell(this.row, this.col - 1),
+				new Cell(row + 1, col),
+				new Cell(row - 1, col),
+				new Cell(row, col + 1),
+				new Cell(row, col - 1),
 			};
 			return cells;
 		}
 
 		private int toWeightUnionNum() {
-			return (this.row - 1) * side + this.col;
+			return (row - 1) * side + col;
 		}
 
 		private boolean isValid() {
-			return isValidRowColNum(this.row) && isValidRowColNum(this.col);
+			return isValidRowColNum(row) && isValidRowColNum(col);
 		}
 
 		private void open() {
-			if (this.isOpen()) {
+			if (isOpen()) {
 				throw new IllegalArgumentException();
 			}
-			openSites[this.row - 1][this.col - 1] = true;
-			this.connectNeighboursIfOpen();
+			openSites[row - 1][col - 1] = true;
+			connectNeighboursIfOpen();
 			openSitesQuantity += 1;
 		}
 
 		private boolean isOpen() {
-			return openSites[this.row - 1][this.col - 1];
+			return openSites[row - 1][col - 1];
 		}
 
 		private void connectNeighboursIfOpen() {
-			if (this.row == 1) {
-				weightedQuickUnionUF.union(TOP_SITE_NUMBER, this.toWeightUnionNum());
+			if (row == 1) {
+				weightedQuickUnionUF.union(TOP_SITE_NUMBER, toWeightUnionNum());
 			}
-			for (Cell neighbour: this.neighbours()) {
-				this.connectIfNeighbourExistsAndIsOpen(neighbour);
+			for (Cell neighbour: neighbours()) {
+				connectIfNeighbourExistsAndIsOpen(neighbour);
 			}
-			if (this.row == side) {
-				weightedQuickUnionUF.union(botSiteNumber, this.toWeightUnionNum());
+			if (row == side) {
+				weightedQuickUnionUF.union(botSiteNumber, toWeightUnionNum());
 			}
 		}
 
 		private void connectIfNeighbourExistsAndIsOpen(Cell neighbour) {
 			if (neighbour.isValid() && neighbour.isOpen()) {
 				weightedQuickUnionUF.union(
-				this.toWeightUnionNum(), neighbour.toWeightUnionNum());
+				toWeightUnionNum(), neighbour.toWeightUnionNum());
 			}
 		}
 
 		private boolean isConnectedToTop() {
-			return weightedQuickUnionUF.connected(TOP_SITE_NUMBER, this.toWeightUnionNum());
+			return weightedQuickUnionUF.connected(TOP_SITE_NUMBER, toWeightUnionNum());
 		}
 	}
 
@@ -126,11 +126,11 @@ public class Percolation {
 	}
 
 	public int numberOfOpenSites() {
-		return this.openSitesQuantity;
+		return openSitesQuantity;
 	}
 
 	public boolean percolates() {
-		return this.weightedQuickUnionUF.connected(TOP_SITE_NUMBER, this.botSiteNumber);
+		return weightedQuickUnionUF.connected(TOP_SITE_NUMBER, botSiteNumber);
 	}
 
 	public static void main(String[] args) {

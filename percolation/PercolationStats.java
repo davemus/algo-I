@@ -1,61 +1,67 @@
-/* *****************************************************************************
- *  Name:
- *  Date:
- *  Description:
- **************************************************************************** */
-
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
+/*
+ * Makes set of Monte-Carlo simulations. The aim is to understand
+ * what ratio of emptyness volume to all solid body volume is sufficient
+ * to percolation.
+ *
+ * For calculations two-sided Student's t-distribution is used. We choose
+ * 95% confidence as enough for us.
+ */
+
 public class PercolationStats {
-    private static final double MAGIC_PROBABILITY_NUMBER = 1.96;
-    private final int size;
-    private final double meanA;
-    private final double stdDev;
-    private final double coLo;
-    private final double coHi;
+    // for simplicity we assume, that we do enormous amount of
+    // trials (>30). That allow us to use coeff for infinity
+    // number of trials
+    private static final double STUDENTS_COEFF = 1.96;
+    private final double cachedMean;
+    private final double cachedStandardDerivation;
+    private final double lowBoundaryOfStudentsInterval;
+    private final double highBoundaryOfStudentsInterval;
 
     public PercolationStats(int n, int trials) {
         if (n <= 0 || trials <= 0) {
             throw new IllegalArgumentException();
         }
+
         double[] experimentResults = new double[trials];
-        this.size = n;
         for (int i = 0; i < trials; i++) {
-            experimentResults[i] = this.doExperiment();
+            experimentResults[i] = this.doExperiment(n);
         }
-        this.meanA = StdStats.mean(experimentResults);
-        this.stdDev = StdStats.stddev(experimentResults);
-        this.coLo = this.meanA - MAGIC_PROBABILITY_NUMBER * this.stdDev / Math.sqrt(trials);
-        this.coHi = this.meanA + MAGIC_PROBABILITY_NUMBER * this.stdDev / Math.sqrt(trials);
+
+        cachedMean = StdStats.mean(experimentResults);
+        cachedStandardDerivation = StdStats.stddev(experimentResults);
+        lowBoundaryOfStudentsInterval = cachedMean - STUDENTS_COEFF * cachedStandardDerivation / Math.sqrt(trials);
+        highBoundaryOfStudentsInterval = cachedMean + STUDENTS_COEFF * cachedStandardDerivation / Math.sqrt(trials);
     }
 
-    private double doExperiment() {
-        Percolation percolation = new Percolation(this.size);
+    private double doExperiment(int size) {
+        Percolation percolation = new Percolation(size);
         while (true) {
-            int randRow = StdRandom.uniform(1, this.size + 1);
-            int randCol = StdRandom.uniform(1, this.size + 1);
+            int randRow = StdRandom.uniform(1, size + 1);
+            int randCol = StdRandom.uniform(1, size + 1);
             percolation.open(randRow, randCol);
             if (percolation.percolates()) {
-                return (double) percolation.numberOfOpenSites() / (this.size * this.size);
+                return (double) percolation.numberOfOpenSites() / (size * size);
             }
         }
     }
 
     public double mean() {
-        return this.meanA;
+        return this.cachedMean;
     }
 
     public double stddev() {
-        return this.stdDev;
+        return this.cachedStandardDerivation;
     }
 
     public double confidenceLo() {
-        return this.coLo;
+        return this.lowBoundaryOfStudentsInterval;
     }
 
     public double confidenceHi() {
-        return this.coHi;
+        return this.highBoundaryOfStudentsInterval;
     }
 
     public static void main(String[] args) {
