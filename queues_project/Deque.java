@@ -25,7 +25,6 @@ public class Deque<Item> implements Iterable<Item> {
         if (item == null) {
             throw new IllegalArgumentException();
         }
-
         this.first = new Node(null, item, this.first);
         if (this.first.next != null) {
             this.first.next.prev = this.first;
@@ -59,12 +58,14 @@ public class Deque<Item> implements Iterable<Item> {
         this.size--;
         if (this.first == null) {
             this.last = null;
+        } else {
+            this.first.prev = null;
         }
         return firstValue;
     }
 
     public Item removeLast() {
-        if (this.first == null) {
+        if (this.last == null) {
             throw new NoSuchElementException();
         }
         Item lastValue = this.last.val;
@@ -72,6 +73,8 @@ public class Deque<Item> implements Iterable<Item> {
         this.size--;
         if (this.last == null) {
             this.first = null;
+        } else {
+            this.last.next = null;
         }
         return lastValue;
     }
@@ -124,21 +127,23 @@ public class Deque<Item> implements Iterable<Item> {
         for (int i = 1; i <= 5; i++) {
             deque.addFirst(i);
         }
-        for (int i = 5; i >= 1; i--) {
+        for (int i = 1; i <= 5; i++) {
             tmp = deque.removeLast();
             assert tmp == i;
         }
         assert deque.isEmpty();
         // works as queue
+        deque = new Deque<>();
         for (int i = 1; i <= 5; i++) {
-            deque.addFirst(i);
+            deque.addLast(i);
         }
         for (int i = 1; i <= 5; i++) {
-            tmp = deque.removeLast();
+            tmp = deque.removeFirst();
             assert tmp == i;
         }
         assert deque.isEmpty();
         // works as deque
+        deque = new Deque<>();
         for (int i = 1; i <= 5; i++) {
             if (i % 2 == 0) {
                 deque.addLast(i);
@@ -148,7 +153,7 @@ public class Deque<Item> implements Iterable<Item> {
             }
         }
         for (int i = 5; i >= 1; i--) {
-            if (i % 2 == 0) {
+            if (i % 2 != 0) {
                 tmp = deque.removeFirst();
             }
             else {
@@ -158,6 +163,7 @@ public class Deque<Item> implements Iterable<Item> {
         }
         assert deque.isEmpty();
         // test i failed
+        deque = new Deque<>();
         deque.addFirst(2);
         deque.removeLast();
         deque.addFirst(4);
@@ -167,8 +173,5 @@ public class Deque<Item> implements Iterable<Item> {
         deque.addFirst(8);
         deque.removeLast();
         assert deque.isEmpty();
-        for (int i = 1; i <= 5; i++) {
-            deque.addFirst(i);
-        }
     }
 }
