@@ -10,29 +10,29 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     @SuppressWarnings("unchecked")
     public RandomizedQueue() {
-        this.bag = (Item[]) new Object[2];
-        this.capacity = 2;
-        this.tail = -1;
+        bag = (Item[]) new Object[2];
+        capacity = 2;
+        tail = -1;
     }
 
     private void resizeIfNeeded() {
-        if (this.tail == this.capacity) {
-            this.resize(2);
+        if (tail == capacity) {
+            resize(2);
         }
-        else if (this.tail == this.capacity / 4 && this.capacity > 2) {
-            this.resize(0.5);
+        else if (tail == capacity / 4 && capacity > 2) {
+            resize(0.5);
         }
     }
 
     @SuppressWarnings("unchecked")
     private void resize(double sizeMultiplier) {
         int oldCapacity = capacity;
-        capacity = (int) Math.ceil(this.capacity * sizeMultiplier);
+        capacity = (int) Math.ceil(capacity * sizeMultiplier);
         Item[] copy = (Item[]) new Object[capacity];
         for (int i = 0; i < tail; i++) {
-            copy[i] = this.bag[i];
+            copy[i] = bag[i];
         }
-        this.bag = copy;
+        bag = copy;
     }
 
     public int size() {
@@ -40,35 +40,35 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     public boolean isEmpty() {
-        return this.tail == -1;
+        return tail == -1;
     }
 
     public void enqueue(Item item) {
         if (item == null) {
             throw new IllegalArgumentException();
         }
-        this.tail++;
-        this.resizeIfNeeded();
-        this.bag[this.tail] = item;
+        tail++;
+        resizeIfNeeded();
+        bag[this.tail] = item;
     }
 
     public Item dequeue() {
-        if (this.isEmpty()) {
+        if (isEmpty()) {
             throw new NoSuchElementException();
         }
-        int itemNumberToRemove = StdRandom.uniform(this.tail + 1);
-        Item item = this.bag[itemNumberToRemove];
-        this.bag[itemNumberToRemove] = this.bag[tail];
-        this.tail--;
-        this.resizeIfNeeded();
+        int itemNumberToRemove = StdRandom.uniform(tail + 1);
+        Item item = bag[itemNumberToRemove];
+        bag[itemNumberToRemove] = bag[tail];
+        tail--;
+        resizeIfNeeded();
         return item;
     }
 
     public Item sample() {
-        if (this.isEmpty()) {
+        if (isEmpty()) {
             throw new NoSuchElementException();
         }
-        return this.bag[StdRandom.uniform(this.tail + 1)];
+        return bag[StdRandom.uniform(this.tail + 1)];
     }
 
     public Iterator<Item> iterator() {
@@ -81,24 +81,24 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         @SuppressWarnings("unchecked")
         RandQueueIterator(RandomizedQueue<Item> randDeque) {
-            this.items = (Item[]) new Object[randDeque.size()];
+            items = (Item[]) new Object[randDeque.size()];
             for (int i = 0; i < randDeque.size(); i++) {
-                this.items[i] = randDeque.bag[i];
+                items[i] = randDeque.bag[i];
             }
-            StdRandom.shuffle(this.items);
-            this.ptr = -1;
+            StdRandom.shuffle(items);
+            ptr = -1;
         }
 
         public Item next() {
             if (!this.hasNext()) {
                 throw new NoSuchElementException();
             }
-            this.ptr++;
-            return this.items[ptr];
+            ptr++;
+            return items[ptr];
         }
 
         public boolean hasNext() {
-            return this.ptr < this.items.length - 1;
+            return ptr < items.length - 1;
         }
 
         public void remove() {
