@@ -8,6 +8,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private int capacity;
     private int tail;
 
+    @SuppressWarnings("unchecked")
     public RandomizedQueue() {
         this.bag = (Item[]) new Object[2];
         this.capacity = 2;
@@ -16,21 +17,22 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private void resizeIfNeeded() {
         if (this.tail == this.capacity) {
-            this.capacity = this.capacity * 2;
-            Item[] copy = (Item[]) new Object[capacity];
-            for (int i = 0; i < this.tail; i++) {
-                copy[i] = this.bag[i];
-            }
-            this.bag = copy;
+            this.resize(2);
         }
-        else if (this.tail == this.capacity / 4 && this.capacity >= 2) {
-            this.capacity = this.capacity / 2;
-            Item[] copy = (Item[]) new Object[capacity];
-            for (int i = 0; i < capacity; i++) {
-                copy[i] = this.bag[i];
-            }
-            this.bag = copy;
+        else if (this.tail == this.capacity / 4 && this.capacity > 2) {
+            this.resize(0.5);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void resize(double sizeMultiplier) {
+        int oldCapacity = capacity;
+        capacity = (int) Math.ceil(this.capacity * sizeMultiplier);
+        Item[] copy = (Item[]) new Object[capacity];
+        for (int i = 0; i < tail; i++) {
+            copy[i] = this.bag[i];
+        }
+        this.bag = copy;
     }
 
     public int size() {
@@ -77,6 +79,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         private final Item[] items;
         private int ptr;
 
+        @SuppressWarnings("unchecked")
         RandQueueIterator(RandomizedQueue<Item> randDeque) {
             this.items = (Item[]) new Object[randDeque.size()];
             for (int i = 0; i < randDeque.size(); i++) {
